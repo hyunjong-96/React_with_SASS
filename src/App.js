@@ -1,8 +1,10 @@
 import './App.scss';
 import Button from './component/Button'
+import Box from './component/Box'
 
 function App() {
   return (
+    <>
     <div className="App">
       <div className="buttons">
         <Button size="large" onClick={()=>(console.log('클랙됐다!'))} onDoubleClick={()=>(console.log('두번클릭했다'))}>BUTTON</Button>
@@ -34,6 +36,10 @@ function App() {
         <Button size="large" color="pink" fullWidth>BUTTON</Button>
       </div>
     </div>
+    <div>
+      <Box/>
+    </div>
+    </>
   );
 }
 

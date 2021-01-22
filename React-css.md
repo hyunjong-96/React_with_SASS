@@ -315,6 +315,45 @@ body의 크기는 16 * 1.5 = 24px
 
 **참고로 웹브라우저에서 설정한 html요소의 크기는 보통 16px** 
 
+# 4. CSS Module
+
+리액트 프로젝트에서 컴포넌트를 스타일링 할 떄 CSS Module이라는 기술을 사용하면, CSS클래스가 중첩되는 것을 완벽하게 방지할수 있다.
+
+CSS파일의 확장자를 .module.css로 하면된다.
+
+[Box.module.css]
+
+```css
+.Box{
+	background: black;
+    color:white;
+    padding: 2rem;
+}
+```
+
+[Box.js]
+
+```jsx
+import React from "react"
+import styles from "./Box.module.css"
+function Box(){
+    return <div className={styles.Box}>{styles.Box}</div>
+}
+export default Box
+```
+
+className을 설정할 때에는 styles.Box 이렇게 import로 불러온 styles객체 안에 있는 값을 참조해야 한다.
+
+그리고 css module로 작성하게 되면 클래스 이름에 대하여 고유한 이름들이 만들어지기 떄문에, css클래스 이름이 관계없는 곳에서 사용한 CSS클래스 이름과 중복되는 일이 없다.
+
+## *css 클래스 네이밍 규칙
+
+* 컴포넌트의 이름은 다른 컴포넌트랑 중복되지 않게 한다.
+* 컴포넌트의 최상단 CSS 클래스는 컴포넌트의 이름과 일치시킨다.(.Button)
+* 컴포넌트 내부에서 보여지는 CSS클래스는 CSS Selector를 잘 활용한다.(.MyForm .my-input)
+
+클래스 네이밍 규칙을 만들고 따르기 싫다면 CSS Module을 사용하면 된다.
+
 # *css 속성
 
 * outline : border 바깥 외곽선(요소를 두드러져 보이게 만들기 위함)
@@ -322,3 +361,4 @@ body의 크기는 16 * 1.5 = 24px
 * border-radius : 테두리의 둥근 정도
   ![image](https://user-images.githubusercontent.com/57162257/105456321-4f627800-5cc8-11eb-8029-72a310a34f2c.png)
 * 
+

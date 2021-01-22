@@ -18,4 +18,3 @@ function CheckBox({children, checked, ...rest}){
 }
 
 export default CheckBox
-

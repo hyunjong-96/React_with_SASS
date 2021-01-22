@@ -518,7 +518,218 @@ export default CheckBox
   }
   ```
 
+
+
+# 5.Styled-Components
+
+## [1]Tagged Template Literal
+
+(styled-components가 내부적으로 어떻게 작동하는지 이해할수있음.)
+
+문자열 조합을 더욱 쉽게 할 수 잇게 해주는 ES6문법
+
+```javascript
+const red = "빨간색";
+const blue = "파란색";
+function favoriteColors(text, ...values){
+    return texts.reduce((result, text, i)=>`${result}${text}${values[i]} ? `<b>${values[i]}</b>` : ''} `,'');
+}
+
+favoriteColors`제가 좋아하는 색은 ${red}과 ${blue}입니다.`
+//제가 좋아하는 색은 <b>빨간색</b>과 <b>파란색</b>입니다.
+```
+
+위와 같은 코드.. 복잡해보이지만 일단은 넘어가자..ㅎ
+
+styled-components에서는 이런 문법을 사용해서 컴포넌트의 props를 읽어온다.
+
+```jsx
+const StyledDiv = styled`background : ${props => props.color}`
+```
+
+위와 같은 코드를 보면 ${}을 통해 함수를 넣어줬다면, 해당 함수를 사용해 줄 수도 있다.
+
+```jsx
+function sample(texts, ...fns) {
+  const mockProps = {
+    title: '안녕하세요',
+    body: '내용은 내용내용 입니다.'
+  };
+  return texts.reduce((result, text, i) => `${result}${text}${fns[i] ? fns[i](mockProps) : ''}`, '');
+}
+sample`
+  제목: ${props => props.title}
+  내용: ${props => props.body}
+`
+/*
+"
+  제목: 안녕하세요
+  내용: 내용은 내용내용 입니다.
+"
+*/
+```
+
+으으ㅡ어어어어어어어어.............................
+
+## [2]styled-components 사용하기
+
+* npm install styled-components
+
+```scss
+const StyledButton = styled.button`
+  /* 공통 스타일 */
   
+  outline: none;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  padding-left: 1rem;
+  padding-right: 1rem;
+
+  /* 크기 */
+  height:2rem;
+  font-size:1rem;
+
+  /* 색상 */
+  background: #228be6;
+  &:hover {
+    background: #339af0;
+  }
+  &:active {
+    background: #1c7ed6;
+  }
+
+  /* 기타 */
+  &+&{
+      margin-left:1rem;
+  }
+`;
+```
+
+element요소는 styled.button과 같이 styled뒤에 작성해주면 된다.
+
+## *polished
+
+sass에서 lighten()또는 darken()과 같은 유틸함수를 사용하기 위해서는 polished라는 라이브러리를 사용
+
+```
+npm install polished
+```
+
+```scss
+import {lighten,daren} from 'polisehed'
+
+const StyledButton = styeld.button`
+	...
+
+	background: #228be6;
+  &:hover {
+    background: ${lighten(0.1,'#228be6')};
+  }
+  &:active {
+    background: ${darken(0.1,'#228be6')}
+  }
+`
+```
+
+## *ThemeProvider
+
+ ThemeProvider라는 기능을 사용해서 styled-components로 만드는 모든 컴포넌트에서 조회하여 사용할 수 있는 전역적인 값을 설정.
+
+```jsx
+import styled,{ThemeProvider} from 'styled-component'
+
+function App(){
+    ...
+    
+    return(
+    	<ThemeProvider
+            theme={{
+                palette:{
+                    blue:'#228be6',
+          			gray:'#495057',
+          			pink:'#f06595'
+                }
+            }}
+            >
+        	<AppBlock>
+            	<Button>Button</Button>
+            </AppBlock>
+        </ThemeProvider>
+    )
+}
+```
+
+theme을 설정하면 ThemeProvider내부에 렌더링된 styled-components로 만든 컴포넌트에서 palette를 조회하여 사용할수 있다.
+
+## [3]size, color에 따른 버튼만들기
+
+```scss
+import React from 'react'
+import styled,{css} from 'styled-components'
+import {lighten,darken} from 'polished'
+
+const colorStyles = css`
+${({theme,color})=>{
+    const selected = theme.palette[color]
+    return css`
+    	background:${selected}
+        &:hover{
+            background:${lighten(0.1,selected)}
+            }
+        &:active{
+            background:${darken(0.1,selected)}
+            }
+    `
+    }}
+`;
+
+const sizeStyles = css`
+${({size})=>{
+    height:sizes[size].height;
+    font-size:sizes[size].fontSize;
+    }}
+`
+const sizes = {
+    large:{
+        height:'3rem',
+        fontSize:'1.25rem'
+    },
+    medium:{
+        height:'2.25rem',
+        fontSize:'1rem'
+    },
+    small:{
+        height:'1.75rem',
+        fontSize:'0.875rem'
+    }
+}
+
+const StyledButton = styled.button`
+	...
+
+	/*크기*/
+	${sizeStyles}
+	/*색상*/
+	${colorStyles}
+	...
+`
+
+function Button({children,color,size, ...rest}){
+    return(
+        <StyledButton color={color} size={size} {...rest}>{children}</StyledButton>
+    )
+}
+
+Button.defaultProps={
+    color:'blue',
+	size:'medium'
+}
+```
+
+
 
 # *css 속성
 

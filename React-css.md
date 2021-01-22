@@ -319,6 +319,11 @@ body의 크기는 16 * 1.5 = 24px
 
 리액트 프로젝트에서 컴포넌트를 스타일링 할 떄 CSS Module이라는 기술을 사용하면, CSS클래스가 중첩되는 것을 완벽하게 방지할수 있다.
 
+사용하는 경우
+
+* 레거시 프로젝트에 리엑트를 도입하게 될떄.
+* 클래스 이름 짓는 규칙을 정하기 힘든 상황이거나 번거러울때
+
 CSS파일의 확장자를 .module.css로 하면된다.
 
 [Box.module.css]
@@ -354,11 +359,184 @@ className을 설정할 때에는 styles.Box 이렇게 import로 불러온 styles
 
 클래스 네이밍 규칙을 만들고 따르기 싫다면 CSS Module을 사용하면 된다.
 
+## [1]CSS module 시작하기
+
+CSS Module은 별로도 설치할 라이브러리는 없다.
+
+이 기능은 webpack에서 사용하는 css-loader에서 지원함. CRA로 만든 프로젝트에는 이미 적용이 되어있다.
+
+[CheckBox.module.css]
+
+```css
+.checkBox{
+    display: flex;
+    align-items: center;
+}
+
+.checkBox label{
+    cursor: pointer;
+}
+
+.checkBox input{
+    width: 0;
+    height: 0;
+    position: absolute;/*본문을 중심으로 위치해있음*/
+    opacity:0; /*투명도*/
+}
+
+.checkbox span{
+    font-size: 1.125rem;
+    font-weight: bold;
+}
+
+.icon{
+    display: flex;
+    align-items: center;
+    /*아이콘의 크기는 폰트 사이즈로 조정 가능*/
+    font-size: 2rem;
+    margin-right: 0.25rem;
+    color: #adb5bd;
+}
+
+.checked{
+    color: #339af0;
+}
+```
+
+[App.js]
+
+```jsx
+import React,{useState} from 'react'
+import CheckBox from './component/CheckBox'
+
+function App(){
+    const [check,setCheck] = useState(false)
+    const onChange =(e)=>{
+        setCheck(e.target.checked)
+    }
+    
+    return(
+    	div>
+      <CheckBox onChange={onChange} checked={check}>
+        다음 약관에 모두 동의
+      </CheckBox>
+      <p>
+        <b>check : </b>
+        {check ? 'true' : 'false'}
+      </p>
+    </div>
+    )
+}
+```
+
+[CheckBox.js]
+
+```jsx
+import React from 'react'
+import {MdCheckBox, MdCheckBoxOutlineBlank} from 'react-icons/md'
+import styles from '../modules/CheckBox.module.css'
+
+function CheckBox({children, checked, ...rest}){
+    return(
+        <div className={styles.checkBox}>
+            <label>
+                <input type="checkbox" checked={checked} {...rest}/>
+                <div className={styles.icon}>{checked ? <MdCheckBox className={styles.checked}/> : <MdCheckBoxOutlineBlank/>}</div>
+            </label> {//label 요소에 묶여있어서 input과 icon이 포함된 div요소가 함께 클릭된다.}
+            <span>{children}</span>
+        </div>
+    )
+}
+
+export default CheckBox
+```
+
+## *CSS Module의 객체값 조회
+
+* 클래스 이름에 - 가 들어있으면 styles['my-class']
+
+* 클래스 이름이 여러개있는경우
+
+  ```jsx
+  import React from 'react'
+  import {MdCheckBox, MdCheckBoxOutlineBlank} from 'react-icons/md'
+  import styles from '../modules/CheckBox.module.css'
+  import classNames from 'classnames/bind' //classnames 모듈 설치
+  
+  const cx = classNames.bind(styles)//classnames의 bind메소드 사용
+  
+  function CheckBox({children, checked, ...rest}){
+      return(
+          <div className={cx('checkBox')}>
+              <label>
+                  <input type="checkbox" checked={checked} {...rest}/>
+                  <div className={cx('icon')}>{checked ? <MdCheckBox className={cx('checked')}/> : <MdCheckBoxOutlineBlank/>}</div>
+              </label>
+              <span>{children}</span>
+          </div>
+      )
+  }
+  
+  export default CheckBox
+  ```
+
+  위와 같이 classnames모듈을 다운받고 bind메소드를 사용해준다.
+
+  여러개의 CSS클래스를 사용해야할 경우는
+
+  ```javascript
+  cx('one', 'two')
+  cx('my-component', {
+    condition: true
+  })
+  cx('my-component', ['another', 'classnames'])
+  ```
+
+## [2]CSS Module to Sass
+
+.module.scss로 바꿔주기만 하면 된다.
+
+대신 node-sass는 꼭 설치
+
+* 전역적 클래스이름을 사용하고자할떄
+
+  ```scss
+  :global {
+    .my-global-name {
+  
+    }
+  }
+  ```
+
+* 특정 클래스에서만 고유 이름을 만들어서 사용하고자할 경우
+
+  ```scss
+  :local {
+    .make-this-local {
+  
+    }
+  }
+  ```
+
+  
+
 # *css 속성
 
 * outline : border 바깥 외곽선(요소를 두드러져 보이게 만들기 위함)
 * border : 테두리
 * border-radius : 테두리의 둥근 정도
   ![image](https://user-images.githubusercontent.com/57162257/105456321-4f627800-5cc8-11eb-8029-72a310a34f2c.png)
-* 
+* position : element를 배치하는 방법
+  https://medium.com/@yeon22/css-css-position-%EC%84%A4%EB%AA%85-f2c0a0b26556
+  * static : element에 position을 지정하지 않았을때 기본적으로 적용되는 값.
+    static의 경우 top, right, bottom, left, z-index속성들이 아무런 효과를 주지 못한다.
+  * relativ : element가 문서의 일반적인 흐름에 따라 배치됨.
+    자신의 static위치에서 top,right,bottom,left와 같은 속성에 의한 상대적인(relative) 위치에 배치됨
+    아무런 위치 속성을 설정하지 않으면 static과 같은 위치에 배치
+    그리고 relative로 지정한 element는 다른 요소들의 위치에 영향을 주지 않는다.
+  * absolute : element가 문서의 일반적인 흐름을 따르지 않는다.
+    가장 가까이에 위치한 조상element(position : relative)에 대해 상대적 위치로 배치되고 조상element가 없으면 본문(body)을 기준으로 삼고 페이지 스크롤에 따라 움직인다.
+  * fixed : absolute와 마찬가지로 element가 문서의 일반적인 흐름에서 제거된다. 대신, 스크린의 뷰포트(viewport)를 기준으로 한 위치에 배치된다. 스크롤되어도 움직이지 않는 고정된 자리를 갖게 된다.(viewport : 웹페이지가 사용자에게 보여지는 영역)
+    즉, 스크롤되어도 움직이지 않는 고정된 자리를 갖게된다.
+* opacity : 투명도
 

@@ -1,11 +1,18 @@
+import React,{useState} from 'react'
 import './App.scss';
 import Button from './component/Button'
 import Box from './component/Box'
+import CheckBox from './component/CheckBox'
 
 function App() {
+  const [check, setCheck] = useState(false)
+  const onChange = (e) => {
+    setCheck(e.target.checked)
+  }
+
   return (
     <>
-    <div className="App">
+    {/* <div className="App">
       <div className="buttons">
         <Button size="large" onClick={()=>(console.log('클랙됐다!'))} onDoubleClick={()=>(console.log('두번클릭했다'))}>BUTTON</Button>
         <Button onMouseMove={(e)=>(console.log('마우스이벤트!',e.clientX))}>BUTTON</Button>
@@ -38,6 +45,15 @@ function App() {
     </div>
     <div>
       <Box/>
+    </div> */}
+    <div>
+      <CheckBox onChange={onChange} checked={check}>
+        다음 약관에 모두 동의
+      </CheckBox>
+      <p>
+        <b>check : </b>
+        {check ? 'true' : 'false'}
+      </p>
     </div>
     </>
   );

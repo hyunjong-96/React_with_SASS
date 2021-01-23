@@ -688,7 +688,7 @@ ${({theme,color})=>{
 
 const sizeStyles = css`
 ${({size})=>{
-    height:sizes[size].height;
+    height:sizes[size].height; 
     font-size:sizes[size].fontSize;
     }}
 `
@@ -727,6 +727,51 @@ Button.defaultProps={
     color:'blue',
 	size:'medium'
 }
+```
+
+## *styled-components버그
+
+버튼간의 건격을 만들어주기 위해 한줄의 버튼에 
+
+```scss
+&+&{
+	margin-left:1rem;
+}
+```
+
+추가해주고 fullWidth상태가 들어왔을떄는 위아래의 간격을 띄워주기 위해
+
+```scss
+${props=>(
+	props.fullWidth &&
+	css`
+		width:100%;
+		justify-content:center;
+		&+&{
+			margin-left:0;
+			margin-top:1rem;
+		}
+	`
+)}
+```
+
+을 해줬는데 동일하게 부여된 classname의 margin값이 부여됨(fullWidth일때 margin값이 먹지않음)
+
+이유는 styled-component 5.2.0버전 부터 생긴 버그라고 한다.
+
+[해결]
+
+```
+&+&{
+	...
+}
+
+대신
+
+&:not(:first-child){
+	...
+}
+를 사용해주자.
 ```
 
 

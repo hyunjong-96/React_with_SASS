@@ -70,6 +70,16 @@ function App() {
         <SCButton color='pink'>Button</SCButton>
         <SCButton color='pink' size='small'>Button</SCButton>
     </ButtonGroup>
+    <ButtonGroup>
+        <SCButton size='large' outline>Button</SCButton>
+        <SCButton color='gray' outline>Button</SCButton>
+        <SCButton color='pink' size='small' outline>Button</SCButton>
+    </ButtonGroup>
+    <ButtonGroup>
+        <SCButton fullWidth>Button</SCButton>
+        <SCButton color='gray' fullWidth>Button</SCButton>
+        <SCButton color='pink' fullWidth>Button</SCButton>
+    </ButtonGroup>
     </AppBlock>
     </ThemeProvider>
     {/* <Circle color="red" huge/> */}

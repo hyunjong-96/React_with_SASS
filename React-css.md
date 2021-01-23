@@ -774,6 +774,58 @@ ${props=>(
 를 사용해주자.
 ```
 
+[3]Dialog
+
+
+
+[4]트랜지션 구현하기
+
+트랜지션 효과를 적용할떄는 styled-component에서 keyframes라는 유틸을 사용.
+
+### (1)나타나기 구현
+
+```scss
+import styled,{keyframes} from 'styled-components'
+
+const fadeIn = keyframes`
+from{
+    opacity:0;
+}
+to{
+    opacity:1;
+}
+`
+
+const slidUp = keyframes`
+from{
+    transform : translateY(200px);
+}
+to{
+    transform:translateY(0px)
+}
+`
+```
+
+fadeIn은 투명도가 0에서 1로 변경
+
+slidUp은 현재 요소가 위치하고 있는곳에서 아래서 200px떨어진 위치에서 현재 위치까지 이동.
+
+```scss
+const DarkBackground = styled.div`
+	...
+	
+	animation-duration : 0.25s;
+//한 싸이클의 애니메이션이 얼마에 걸쳐 일어날것인지
+	animation-timing-function : ease-out;
+//중간 상태들의 전환을 어떤 시간간격으로 진행할지 지정
+	animation-name : ${fadeIn}
+//keyframes유틸을 활용하여 중간 상태를 지정
+	animation-fill-mode : forwards;
+//애니메이션이 시작되기 전이나 끝나고 난 후 어떤 값이 적용될지 지정
+
+`
+```
+
 
 
 # *css 속성
@@ -795,4 +847,10 @@ ${props=>(
   * fixed : absolute와 마찬가지로 element가 문서의 일반적인 흐름에서 제거된다. 대신, 스크린의 뷰포트(viewport)를 기준으로 한 위치에 배치된다. 스크롤되어도 움직이지 않는 고정된 자리를 갖게 된다.(viewport : 웹페이지가 사용자에게 보여지는 영역)
     즉, 스크롤되어도 움직이지 않는 고정된 자리를 갖게된다.
 * opacity : 투명도
+* transform
+  * translate() : translate(x,y)함수는 요소를 왼쪽에서부터 x거리, 위에서부터 x거리만큼 상대적으로 위치를 정함.
+  * translateX() : 좌우(수평)의 이동 거리 값을 지정
+  * translateY() : 상하(수직)의 이동거리 값을 지정
+* animation
+  [https://developer.mozilla.org/ko/docs/Web/CSS/CSS_Animations/Using_CSS_animations]
 

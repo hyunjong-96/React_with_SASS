@@ -826,6 +826,84 @@ const DarkBackground = styled.div`
 `
 ```
 
+### (2)사라지기 구현
+
+animate : 현재 트랜지션 효과를 보여주고 있는 중이라는 상태를 의미하는 값.
+
+localVisible : 현재 컴포넌트의 보여짐 상태값
+
+```jsx
+function Dialog({...,visible}){
+    const [animate, setAnimate] = useState(false)
+    const [localVisible, setLocalVisible] = useState(visible)
+    
+    useEffect(()=>{
+        if(localVisible && !visible){//dialog컴포넌트가 보이고 있을때 visible이 false가 된경우
+            setAnimate(true)//localVisible이 false가 되어도 dialog컴포넌트가 보일수 있도록 유지시켜줌.
+            setTimout(()=>setAnimate(false),250)//visible이 false가 됬을때 250ms뒤에 animate를 다시 false로 상태변화
+        }
+        setLocalVisible(visible)
+    },[visible, localVisible])
+        
+    if(!localVisible && !animate) return null
+    return(
+    	...
+    )
+}
+```
+
+사라지기를 구현한후 dialog가 자연스럽게 트랜직션을 통해 사라지는걸 구현하기위해서는
+
+```jsx
+import styled,{css,keyframes} from 'styled-components'
+
+const fadeOut = keyframes`
+from{
+	opacity:1;
+}to{
+	opacity:0;
+}
+`
+const slidDown = keyframes`
+from{
+	transform : translateY(0px);
+}
+to{
+	transform : translateY(200px);
+}
+`
+
+const DarkBackground = styled.div`
+	...
+	${props=>
+	props.disappear && 
+      css`
+	animate-name:${fadeOut}
+`
+}
+`
+
+const DialogBlock = styled.div`
+	...
+	${props=>
+	props.disappear && 
+      css`
+	animate-name:${slidDown}
+`
+}
+`
+
+function Dialog({...}){
+    ...
+    return(
+    	<DarkBackground disappear={!visible}>
+            <DialogBlock disappear={!visible}>
+            </DialogBlock>
+        </DarkBackground>
+    )
+}
+```
+
 
 
 # *css 속성
